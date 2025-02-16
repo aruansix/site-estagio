@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard do Candidato</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-blue-500 text-white p-4 flex justify-between items-center">
+        <a href="/" class="text-white font-semibold text-lg hover:underline">Voltar para a Página Inicial</a>
+        <div class="text-xl font-bold text-center w-full">Bem-vindo, {{ candidato.nome }}</div>
+    </header>
+    
+    <div class="container mx-auto mt-6 p-4 bg-white shadow-lg rounded-lg">
+        <h2 class="text-lg font-semibold">Escritórios Disponíveis</h2>
+        <ul>
+            {% for escritorio in escritorios %}
+            <li class="p-4 border rounded-lg flex justify-between mt-2">
+                <div>
+                    <span class="font-semibold">{{ escritorio.nome }}</span><br>
+                    <span><strong>Áreas de Atuação:</strong> 
+                        {% if escritorio.areas_atuacao %}
+                            {{ escritorio.areas_atuacao | join(" ") }}
+                        {% else %}
+                            Nenhuma área de atuação cadastrada.
+                        {% endif %}
+                    </span>
+                </div>
+
+                {% if escritorio.id in candidato.interesses %}
+                    <button onclick="removerInteresse('{{ escritorio.id }}')" class="bg-red-500 text-white px-4 py-2 rounded">Remover Interesse</button>
+                {% else %}
+                    <button onclick="marcarInteresse('{{ escritorio.id }}')" class="bg-green-500 text-white px-4 py-2 rounded">Marcar Interesse</button>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Botões de Editar e Excluir Cadastro -->
+    <div class="container mx-auto mt-6 p-4 bg-white shadow-lg rounded-lg text-center">
+        <a href="/editar_candidato/{{ candidato.id }}" class="bg-yellow-500 text-white px-4 py-2 rounded mx-2">Editar Cadastro</a>
+        <button onclick="excluirCandidato('{{ candidato.id }}')" class="bg-red-600 text-white px-4 py-2 rounded">Excluir Cadastro</button>
+    </div>
+
+    <script>
+        function marcarInteresse(escritorioId) {
+            fetch("/marcar_interesse", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ escritorio_id: escritorioId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.mensagem);
+                if (data.sucesso) {
+                    location.reload();
+                }
+            })
+            .catch(error => console.error("Erro:", error));
+        }
+
+        function removerInteresse(escritorioId) {
+            fetch("/remover_interesse", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ escritorio_id: escritorioId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.mensagem);
+                if (data.sucesso) {
+                    location.reload();
+                }
+            })
+            .catch(error => console.error("Erro:", error));
+        }
+
+        function excluirCandidato(candidatoId) {
+        if (confirm("Tem certeza que deseja excluir seu cadastro? Esta ação não pode ser desfeita.")) {
+            fetch(`/excluir_candidato/${candidatoId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.mensagem);
+                if (data.sucesso) {
+                    window.location.href = "/";
+                }
+            })
+            .catch(error => console.error("Erro:", error));
+        }
+    }
+    </script>    
+</body>
+</html>

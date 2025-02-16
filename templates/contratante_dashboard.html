@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard do Escritório</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-green-500 text-white p-4 flex justify-between items-center">
+        <a href="/" class="text-white font-semibold text-lg hover:underline">Voltar para a Página Inicial</a>
+        <div class="text-xl font-bold text-center w-full">Painel do Escritório</div>
+    </header>
+    
+    <div class="container mx-auto mt-6 p-4 bg-white shadow-lg rounded-lg">
+        <h2 class="text-lg font-semibold">Candidatos Interessados</h2>
+        
+        {% if candidatos_interessados %}
+            <ul>
+                {% for candidato in candidatos_interessados %}
+                <li class="p-4 border rounded-lg mt-2 bg-green-200 flex justify-between">
+                    <div>
+                        <div><strong>Nome:</strong> {{ candidato.nome }}</div>
+                        <div><strong>E-mail:</strong> {{ candidato.email }}</div>
+                        <div><strong>Período do Curso:</strong> {{ candidato.periodo }}</div>
+                        <div><strong>Habilidades:</strong> {{ candidato.habilidades }}</div>
+                        {% if candidato.telefone %}
+                        <div><strong>Telefone:</strong> {{ candidato.telefone }}</div>
+                        {% endif %}
+                        <div><strong>Horário Disponível:</strong> {{ candidato.horario }}</div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-gray-500">Nenhum candidato demonstrou interesse ainda.</p>
+        {% endif %}
+    </div>
+
+    <div class="container mx-auto mt-6 p-4 bg-white shadow-lg rounded-lg">
+        <h2 class="text-lg font-semibold">Outros Candidatos</h2>
+        
+        {% if candidatos %}
+            <ul>
+                {% for candidato in candidatos %}
+                <li class="p-4 border rounded-lg mt-2">
+                    <div>
+                        <div><strong>Nome:</strong> {{ candidato.nome }}</div>
+                        <div><strong>E-mail:</strong> {{ candidato.email }}</div>
+                        <div><strong>Período do Curso:</strong> {{ candidato.periodo }}</div>
+                        <div><strong>Habilidades:</strong> {{ candidato.habilidades }}</div>
+                        {% if candidato.telefone %}
+                        <div><strong>Telefone:</strong> {{ candidato.telefone }}</div>
+                        {% endif %}
+                        <div><strong>Horário Disponível:</strong> {{ candidato.horario }}</div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-gray-500">Nenhum candidato disponível.</p>
+        {% endif %}
+    </div>
+
+    <!-- Botões de Editar e Excluir Cadastro -->
+    <div class="container mx-auto mt-6 p-4 bg-white shadow-lg rounded-lg text-center">
+        <a href="/editar_escritorio/{{ escritorio.id }}" class="bg-yellow-500 text-white px-4 py-2 rounded mx-2">Editar Cadastro</a>
+        <button onclick="excluirEscritorio('{{ escritorio.id }}')" class="bg-red-600 text-white px-4 py-2 rounded">Excluir Cadastro</button>
+    </div>
+
+    <script>
+        function excluirEscritorio(escritorioId) {
+            if (confirm("Tem certeza que deseja excluir seu cadastro? Esta ação não pode ser desfeita.")) {
+                fetch(`/excluir_escritorio/${escritorioId}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.mensagem);
+                    if (data.sucesso) {
+                        window.location.href = "/"; // Redireciona para a página inicial
+                    }
+                })
+                .catch(error => console.error("Erro:", error));
+            }
+        }
+    </script>
+</body>
+</html>

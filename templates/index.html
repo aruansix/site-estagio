@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Inicial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('/static/fundo-index.jpg');">
+    <div class="absolute top-5 left-5 text-white text-xl font-bold">
+        OAB na Universidade, Subseção de Piripiri
+    </div>
+    
+    <!-- Mensagem de Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="bg-green-500 text-white p-4 rounded-lg absolute top-20 left-1/2 transform -translate-x-1/2">
+                <p>{{ messages[0][1] }}</p>
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <div class="bg-black bg-opacity-50 p-8 rounded-lg text-center text-white">
+        <h1 class="text-2xl font-bold mb-4">Em busca de um estágio</h1>
+        
+        <!-- Se o usuário estiver logado -->
+        {% if is_logged_in %}
+            <p class="text-lg mb-4">Você está logado! </p>
+            <a href="/logout" class="block w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                Logout
+            </a>
+        {% else %}
+            <div class="space-y-4">
+                <a href="/login" class="block w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Login
+                </a>
+                <a href="/inscricao_candidato" class="block w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Para se candidatar a uma vaga de estágio, clique aqui
+                </a>
+                <a href="/inscricao_contratante" class="block w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    Inscreva seu escritório aqui e encontre candidatos disponíveis
+                </a>
+            </div>
+        {% endif %}
+        
+        <!-- Texto de e-mail dentro da box -->
+        <p class="text-white text-lg mt-4">
+            Para mais informações, entre em contato: 
+            <a href="mailto:oabnauniversidade@gmail.com" class="text-blue-400 hover:underline">oabnauniversidade@gmail.com</a>
+        </p>
+    </div>
+</body>
+</html>

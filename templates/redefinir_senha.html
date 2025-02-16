@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir Senha</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+    <header class="bg-blue-500 text-white p-4 flex justify-between items-center">
+        <a href="/" class="text-white font-semibold text-lg hover:underline">Voltar para a Página Inicial</a>
+        <div class="text-2xl font-bold text-center w-full">Redefinir Senha</div>
+    </header>
+
+    <div class="container mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg max-w-md">
+        <form action="/redefinir_senha" method="POST">
+            <!-- Campo oculto para enviar o e-mail -->
+            <input type="hidden" name="email" value="{{ email }}">
+
+            <div class="mb-4">
+                <label for="nova_senha" class="block text-sm font-semibold">Nova Senha</label>
+                <input type="password" id="nova_senha" name="nova_senha" required class="w-full p-3 mt-2 border border-gray-300 rounded-lg">
+            </div>
+
+            <button type="submit" class="bg-blue-500 text-white w-full p-3 rounded-lg font-semibold hover:bg-blue-700">Redefinir Senha</button>
+        </form>
+    </div>
+
+</body>
+</html>
