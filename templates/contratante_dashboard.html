@@ -62,7 +62,7 @@
         {% endif %}
     </div>
 
-    <!-- Botões de Editar e Excluir Cadastro -->
+
     <div class="container mx-auto mt-6 p-4 bg-white shadow-lg rounded-lg text-center">
         <a href="/editar_escritorio/{{ escritorio.id }}" class="bg-yellow-500 text-white px-4 py-2 rounded mx-2">Editar Cadastro</a>
         <button onclick="excluirEscritorio('{{ escritorio.id }}')" class="bg-red-600 text-white px-4 py-2 rounded">Excluir Cadastro</button>
@@ -79,7 +79,7 @@
                 .then(data => {
                     alert(data.mensagem);
                     if (data.sucesso) {
-                        window.location.href = "/"; // Redireciona para a página inicial
+                        window.location.href = "/";
                     }
                 })
                 .catch(error => console.error("Erro:", error));

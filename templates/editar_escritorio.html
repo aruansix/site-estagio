@@ -8,9 +8,9 @@
 </head>
 <body class="h-screen bg-cover bg-center" style="background-image: url('/static/advogados.jpg');">
 
-    <!-- Header -->
+
     <header class="bg-black bg-opacity-50 py-4 flex justify-between items-center">
-        <!-- Botão de Voltar -->
+
         <a href="{{ url_for('contratante_dashboard', escritorio_id=escritorio.id) }}" class="text-white font-semibold text-lg hover:underline">Voltar</a>
         <div class="text-center w-full">
             <h1 class="text-3xl text-white font-bold">Editar Cadastro</h1>
@@ -20,31 +20,31 @@
     <div class="h-full flex items-center justify-center">
         <div class="bg-black bg-opacity-50 p-8 rounded-lg w-full max-w-lg shadow-xl">
             <form method="POST">
-                <!-- Nome do Escritório -->
+
                 <div class="mb-4">
                     <label for="nome" class="block text-gray-200">Nome do Escritório</label>
                     <input type="text" id="nome" name="nome" value="{{ escritorio.nome }}" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
                 </div>
 
-                <!-- E-mail -->
+
                 <div class="mb-4">
                     <label for="email" class="block text-gray-200">E-mail</label>
                     <input type="email" id="email" name="email" value="{{ escritorio.email }}" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
                 </div>
 
-                <!-- Áreas de Atuação -->
+
                 <div class="mb-4">
                     <label for="areas_atuacao" class="block text-gray-200">Áreas de Atuação</label>
                     <input type="text" id="areas_atuacao" name="areas_atuacao" value="{{ escritorio.areas_atuacao }}" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
                 </div>
 
-                <!-- Nova Senha -->
+
                 <div class="mb-4">
                     <label for="senha" class="block text-gray-200">Nova Senha (deixe em branco para manter a atual)</label>
                     <input type="password" id="senha" name="senha" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
                 </div>
 
-                <!-- Botões -->
+
                 <div class="flex justify-between">
                     <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
                         Salvar Alterações

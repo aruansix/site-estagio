@@ -1,22 +1,24 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, session
-from firebase_admin import credentials, firestore, initialize_app
+import os
+import json
 import firebase_admin
+from firebase_admin import credentials, firestore, initialize_app
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"  # Necessário para usar flash messages
+app.secret_key = "supersecretkey"
 
-# Inicializar Firebase
-if not firebase_admin._apps:
-    cred = credentials.Certificate("advocacia-credenciais.json")
-    initialize_app(cred)
+
+firebase_config = json.loads(os.getenv("FIREBASE_CREDENTIALS"))
+
+cred = credentials.Certificate(firebase_config)
+initialize_app(cred)
 
 db = firestore.client()
 candidatos_ref = db.collection("candidatos")
 escritorios_ref = db.collection("escritorios")
 
-# Função de verificação de login
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -26,26 +28,26 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# Página inicial
+
 @app.route('/')
 def home():
     return render_template('index.html', is_logged_in='user_id' in session)
 
-# Página de login
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
         senha = request.form.get('senha')
 
-        # Verificando se é um candidato
+       
         candidato_query = candidatos_ref.where("email", "==", email).stream()
         candidato = next(candidato_query, None)
         if candidato and check_password_hash(candidato.get('senha'), senha):
             session['user_id'] = candidato.id
             return redirect(url_for('candidato_dashboard', candidato_id=candidato.id))
 
-        # Verificando se é um escritório
+
         escritorio_query = escritorios_ref.where("email", "==", email).stream()
         escritorio = next(escritorio_query, None)
         if escritorio and check_password_hash(escritorio.get('senha'), senha):
@@ -55,7 +57,7 @@ def login():
         flash("Usuário ou senha incorretos!", "danger")
     return render_template('login.html')
 
-# Inscrição do candidato
+
 @app.route('/inscricao_candidato', methods=['GET', 'POST'])
 def inscricao_candidato():
     if request.method == 'POST':
@@ -66,7 +68,7 @@ def inscricao_candidato():
         return redirect(url_for('home'))
     return render_template('inscricao_candidato.html')
 
-# Inscrição do escritório
+
 @app.route('/inscricao_contratante', methods=['GET', 'POST'])
 def inscricao_contratante():
     if request.method == 'POST':
@@ -77,7 +79,7 @@ def inscricao_contratante():
         return redirect(url_for('home'))
     return render_template('inscricao_contratante.html')
 
-# Dashboard do candidato
+
 @app.route('/candidato_dashboard/<candidato_id>')
 @login_required
 def candidato_dashboard(candidato_id):
@@ -89,7 +91,7 @@ def candidato_dashboard(candidato_id):
 
     return render_template('candidato_dashboard.html', candidato=candidato, escritorios=escritorios)
 
-# Dashboard do contratante
+
 @app.route('/contratante_dashboard/<escritorio_id>')
 @login_required
 def contratante_dashboard(escritorio_id):
@@ -111,7 +113,7 @@ def contratante_dashboard(escritorio_id):
                            candidatos_interessados=candidatos_interessados,
                            candidatos=candidatos)
 
-# Marcar interesse do candidato
+
 @app.route('/marcar_interesse', methods=['POST'])
 @login_required
 def marcar_interesse():
@@ -141,7 +143,7 @@ def marcar_interesse():
 
     return jsonify({"sucesso": True, "mensagem": "Interesse marcado com sucesso!"})
 
-# Remover interesse do candidato
+
 @app.route('/remover_interesse', methods=['POST'])
 @login_required
 def remover_interesse():
@@ -168,7 +170,7 @@ def remover_interesse():
 
     return jsonify({"sucesso": True, "mensagem": "Interesse removido com sucesso!"})
 
-# Editar cadastro do escritório
+
 @app.route('/editar_escritorio/<escritorio_id>', methods=['GET', 'POST'])
 @login_required
 def editar_escritorio(escritorio_id):
@@ -197,7 +199,7 @@ def editar_escritorio(escritorio_id):
 
     return render_template('editar_escritorio.html', escritorio=escritorio)
 
-# Excluir cadastro do escritório
+
 @app.route('/excluir_escritorio/<escritorio_id>', methods=['POST'])
 @login_required
 def excluir_escritorio(escritorio_id):
@@ -213,7 +215,7 @@ def excluir_escritorio(escritorio_id):
 
     escritorio_ref.delete()
 
-    # Remover o escritório da lista de interesses de todos os candidatos
+
     candidatos = candidatos_ref.stream()
     for candidato in candidatos:
         candidato_data = candidato.to_dict()
@@ -225,7 +227,7 @@ def excluir_escritorio(escritorio_id):
     session.pop('user_id', None)
     return jsonify({"sucesso": True, "mensagem": "Cadastro excluído com sucesso!"})
 
-# Editar cadastro do candidato
+
 @app.route('/editar_candidato/<candidato_id>', methods=['GET', 'POST'])
 @login_required
 def editar_candidato(candidato_id):
@@ -254,7 +256,7 @@ def editar_candidato(candidato_id):
 
     return render_template('editar_candidato.html', candidato=candidato)
 
-# Excluir cadastro do candidato
+
 @app.route('/excluir_candidato/<candidato_id>', methods=['POST'])
 @login_required
 def excluir_candidato(candidato_id):
@@ -268,62 +270,62 @@ def excluir_candidato(candidato_id):
     if not candidato.exists:
         return jsonify({"sucesso": False, "mensagem": "Candidato não encontrado!"}), 404
 
-    # Remover o candidato do Firestore
+
     candidato_ref.delete()
 
-    # Remover a sessão do usuário e redirecionar para a página inicial
+
     session.pop('user_id', None)
     return jsonify({"sucesso": True, "mensagem": "Cadastro excluído com sucesso!"})
 
-# Recuperar senha
+
 @app.route('/recuperar_senha', methods=['GET', 'POST'])
 def recuperar_senha():
     if request.method == 'POST':
         email = request.form.get('email')
         nome = request.form.get('nome')
 
-        # Verifica se o e-mail e o nome correspondem a um usuário
+
         usuario = get_user_by_email(email)
         if usuario and usuario['nome'] == nome:
-            # Redireciona para a página de redefinição de senha, passando o e-mail como parâmetro
+
             return redirect(url_for('redefinir_senha', email=email))
         else:
             flash("E-mail ou nome incorretos.", "danger")
     return render_template('recuperar_senha.html')
 
-# Redefinir senha
+
 @app.route('/redefinir_senha', methods=['GET', 'POST'])
 def redefinir_senha():
     if request.method == 'POST':
-        # Recebe o e-mail e a nova senha do formulário
+
         email = request.form.get('email')
         nova_senha = request.form.get('nova_senha')
 
-        # Atualiza a senha no Firestore
+
         if update_user_password(email, nova_senha):
             flash("Senha redefinida com sucesso!", "success")
-            return redirect(url_for('login'))  # Redireciona para a página de login
+            return redirect(url_for('login'))
         else:
             flash("Erro ao redefinir a senha.", "danger")
-            return redirect(url_for('recuperar_senha'))  # Volta para a página de recuperação de senha em caso de erro
+            return redirect(url_for('recuperar_senha'))
 
-    # Se for um GET, exibe a página de redefinição de senha
-    email = request.args.get('email')  # Recebe o e-mail da URL
+
+    email = request.args.get('email')
     if not email:
         flash("E-mail não fornecido.", "danger")
         return redirect(url_for('recuperar_senha'))
 
     return render_template('redefinir_senha.html', email=email)
 
-# Funções auxiliares
+
 def get_user_by_email(email):
-    # Verifica se o e-mail existe na coleção de candidatos
+    
     candidato_query = candidatos_ref.where("email", "==", email).stream()
     candidato = next(candidato_query, None)
     if candidato:
         return {"email": email, "nome": candidato.get("nome"), "tipo": "candidato"}
 
-    # Verifica se o e-mail existe na coleção de escritórios
+
     escritorio_query = escritorios_ref.where("email", "==", email).stream()
     escritorio = next(escritorio_query, None)
     if escritorio:
@@ -332,7 +334,7 @@ def get_user_by_email(email):
     return None
 
 def update_user_password(email, nova_senha):
-    # Atualiza a senha no Firestore
+ 
     candidato_query = candidatos_ref.where("email", "==", email).stream()
     candidato = next(candidato_query, None)
     if candidato:
@@ -347,7 +349,7 @@ def update_user_password(email, nova_senha):
 
     return False
 
-# Logout
+
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
