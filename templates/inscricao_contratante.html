@@ -8,9 +8,7 @@
 </head>
 <body class="h-screen bg-cover bg-center" style="background-image: url('/static/advogados.jpg');">
 
-
     <header class="bg-black bg-opacity-50 py-4 flex justify-between items-center">
-
         <a href="/" class="text-white font-semibold text-lg hover:underline">Voltar para a Página Inicial</a>
         <div class="text-center w-full">
             <h1 class="text-3xl text-white font-bold items-center">Cadastro de Escritório</h1>
@@ -26,24 +24,25 @@
                     <input type="text" id="nome" name="nome" placeholder="Nome do Escritório" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
                 </div>
 
-
                 <div class="mb-4">
                     <label for="email" class="block text-gray-200">E-mail</label>
                     <input type="email" id="email" name="email" placeholder="E-mail" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
                 </div>
 
+                <div class="mb-4">
+                    <label for="contato" class="block text-gray-200">Contato</label>
+                    <input type="text" id="contato" name="contato" placeholder="Telefone ou E-mail" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
+                </div>
 
                 <div class="mb-4">
                     <label for="senha" class="block text-gray-200">Senha</label>
                     <input type="password" id="senha" name="senha" placeholder="Senha" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
                 </div>
 
-
                 <div class="mb-4">
                     <label for="areas_atuacao" class="block text-gray-200">Áreas de Atuação</label>
                     <input type="text" id="areas_atuacao" name="areas_atuacao" placeholder="Áreas de Atuação" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
                 </div>
-
 
                 <div class="mb-4">
                     <button type="submit" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
@@ -51,7 +50,6 @@
                     </button>
                 </div>
             </form>
-
 
             <p class="text-center text-white mt-4">
                 Já registrou seu escritório? 

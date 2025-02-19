@@ -18,7 +18,8 @@
             {% for escritorio in escritorios %}
             <li class="p-4 border rounded-lg flex justify-between mt-2">
                 <div>
-                    <span class="font-semibold">{{ escritorio.nome }}</span><br>
+                    <span class="font-semibold text-lg">{{ escritorio.nome }}</span><br>
+                    <span class="text-gray-600"><strong>Contato:</strong> {{ escritorio.contato }}</span><br>
                     <span><strong>Áreas de Atuação:</strong> 
                         {% if escritorio.areas_atuacao %}
                             {{ escritorio.areas_atuacao | join(" ") }}
@@ -37,12 +38,6 @@
             {% endfor %}
         </ul>
     </div>
-
-
-    <!--<div class="container mx-auto mt-6 p-4 bg-white shadow-lg rounded-lg text-center">
-        <a href="/editar_candidato/{{ candidato.id }}" class="bg-yellow-500 text-white px-4 py-2 rounded mx-2">Editar Cadastro</a>
-        <button onclick="excluirCandidato('{{ candidato.id }}')" class="bg-red-600 text-white px-4 py-2 rounded">Excluir Cadastro</button>
-    </div>-->
 
     <script>
         function marcarInteresse(escritorioId) {
